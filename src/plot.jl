@@ -1,4 +1,5 @@
 using Primes
+using Plots
 
 function save_plots(ps::Array)
     n = length(ps)
