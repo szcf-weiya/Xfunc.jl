@@ -3,12 +3,13 @@ using Printf
 writeline(io, str...) = write(io, str..., "\n")
 # suppose each row has the same number of subrows
 # TODO: varied subrows and subcolumns
-function print2tex(μ::AbstractVector{Matrix{T}}, σ::AbstractVector{Matrix{T}}, 
+# abstractmatrix allows transposes of matrix
+function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T}, 
                     rownames::AbstractVector{String}, colnames::AbstractVector{String},
                     subrownames::AbstractVector{String}, subcolnames::AbstractVector{String}; 
                     colnames_of_rownames = ["level0", "level1"], file = "/tmp/tmp.tex",
                     isbf = nothing,
-                    sigdigits = 4) where T <: AbstractFloat
+                    sigdigits = 4) where T <: AbstractMatrix
     @assert length(rownames) == length(μ) == length(σ)
     nrow = length(μ)
     rowlevel = 2
