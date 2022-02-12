@@ -20,3 +20,10 @@ end
     end
     save_grid_plots(figs, 3, 4)
 end
+
+@testset "print2tex" begin
+    μ = [rand(3, 4), rand(3, 4)]
+    σ = [rand(3, 4), rand(3, 4)]
+    print2tex(μ, σ, ["A", "B"], ["a", "b"], ["1","2","3"], ["x", "y"], file = "tables/table.tex")
+    run(`make -C tables`)
+end
