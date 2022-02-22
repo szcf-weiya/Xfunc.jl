@@ -22,8 +22,19 @@ end
 end
 
 @testset "print2tex" begin
-    μ = [rand(3, 4), rand(3, 4)]
-    σ = [rand(3, 4), rand(3, 4)]
-    print2tex(μ, σ, ["A", "B"], ["a", "b"], ["1","2","3"], ["x", "y"], file = joinpath(@__DIR__, "tables/table.tex"))
-    # run(`make -C $(@__DIR__)/tables`) # test locally
+    @testset "simple" begin
+        μ = [rand(3, 4), rand(3, 4)]
+        σ = [rand(3, 4), rand(3, 4)]
+        print2tex(μ, σ, ["A", "B"], ["a", "b"], ["1","2","3"], ["x", "y"], file = joinpath(@__DIR__, "tables/table.tex"))
+        # run(`make -C $(@__DIR__)/tables`) # test locally
+    end
+    @testset "other cols" begin
+        μ = [rand(3, 4), rand(3, 4)]
+        σ = [rand(3, 4), rand(3, 4)]
+        others = [rand(3, 1), rand(3, 1)]
+        others_σ = [rand(3, 1), rand(3, 1)]
+        filepath = joinpath(@__DIR__, "tables/table.tex")
+        # filepath = "test/tables/table.tex" # use when locally developping
+        print2tex(μ, σ, ["A", "B"], ["a", "b"], ["1","2","3"], ["x", "y"], file = filepath, other_cols = others, other_col_names = ["other"], other_cols_σ = others_σ)
+    end
 end

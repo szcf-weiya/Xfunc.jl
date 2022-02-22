@@ -8,6 +8,8 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
                     rownames::AbstractVector{String}, colnames::AbstractVector{String},
                     subrownames::AbstractVector{String}, subcolnames::AbstractVector{String}; 
                     colnames_of_rownames = ["level0", "level1"], file = "/tmp/tmp.tex",
+                    other_cols = nothing, other_col_names = nothing,
+                    other_cols_σ = nothing,
                     isbf = nothing,
                     sigdigits = 4) where T <: AbstractMatrix
     @assert length(rownames) == length(μ) == length(σ)
@@ -16,19 +18,30 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
     ncol0 = length(colnames)
     ncol1 = length(subcolnames)
     ncol = ncol0 * ncol1 # plus levels of rownames
+    if isnothing(other_cols)
+        noc = 0
+    else
+        noc = size(other_cols[1], 2)
+    end
+    println("noc = $noc")
     open(file, "w") do io
-        write(io, raw"\begin{tabular}{" * repeat("c", ncol + 2) * raw"}", "\n")
+        write(io, raw"\begin{tabular}{" * repeat("c", ncol + 2 + noc) * raw"}", "\n")
         writeline(io, raw"\toprule")
         # colnames at the first level
         # write(io, "&")
         write(io, raw"\multirow{2}{*}{", colnames_of_rownames[1], "} & ", 
-                  raw"\multirow{2}{*}{", colnames_of_rownames[2], "}\n")
+                  raw"\multirow{2}{*}{", colnames_of_rownames[2], "}")
+        if !isnothing(other_cols)
+            for i = 1:noc
+                write(io, raw"& \multirow{2}{*}{", other_col_names[i], "}")
+            end
+        end
         for i = 1:ncol0
             write(io, "&" * raw"\multicolumn{", "$ncol1}{c}{", colnames[i], "}")
         end
         writeline(io, raw"\tabularnewline")
         # writeline(io, raw"\cmidrule{3-", "$(ncol+2)}")
-        left = 3
+        left = 3 + noc
         for i = 1:ncol0
             right = left + ncol1 - 1
             writeline(io, raw"\cmidrule(lr){", "$left-", "$right}")
@@ -36,6 +49,9 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
         end
         # colnames at the second level
         write(io, "&")
+        for i = 1:noc
+            write(io, "&")
+        end
         for i = 1:ncol0
             for j = 1:ncol1
                 write(io, "&", subcolnames[j])
@@ -52,6 +68,13 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
                     write(io, raw"\multirow{", "$m}{*}{", rownames[i], "}")
                 end
                 write(io, "&", subrownames[j])
+                for ii in 1:noc
+                    if isnothing(other_cols_σ)
+                        write(io, "& $(@sprintf "%.2e" other_cols[i][j, ii])")
+                    else
+                        write(io, "& $(@sprintf "%.2e" other_cols[i][j, ii]) ($(@sprintf "%.1e" other_cols_σ[i][j, ii]))")
+                    end
+                end
                 # write rownames
                 for k = 1:ncol
                     if isnothing(isbf)
