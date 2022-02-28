@@ -10,6 +10,6 @@ export
     save_plots,
     myrange,
     split_keystr,
-    print2tex
-    
+    print2tex,
+    star_pval
 end

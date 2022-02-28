@@ -12,7 +12,7 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
                     other_cols_σ = nothing,
                     right_cols = nothing, right_col_names = nothing,
                     isbf = nothing,
-                    align = "c",
+                    right_align = 'l', # a better way?
                     sigdigits = 4) where T <: AbstractMatrix
     @assert length(rownames) == length(μ) == length(σ)
     nrow = length(μ)
@@ -32,7 +32,7 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
         nor = length(right_cols) # use list
     end
     open(file, "w") do io
-        write(io, raw"\begin{tabular}{" * repeat(align, ncol + 2 + noc + nor) * raw"}", "\n")
+        write(io, raw"\begin{tabular}{" * repeat('c', ncol + 2 + noc) * repeat(right_align, nor) * raw"}", "\n")
         writeline(io, raw"\toprule")
         # colnames at the first level
         # write(io, "&")

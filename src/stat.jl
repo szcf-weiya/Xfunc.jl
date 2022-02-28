@@ -1,3 +1,4 @@
+using Printf
 """
     myrange(x)
 
@@ -16,3 +17,32 @@ function myrange(x::AbstractMatrix{T}) where T <: Real
     end
     return res
 end
+
+"""
+    Annotate significance with symbols. Refer to `?symnum` in R.
+"""
+function star_pval(x::AbstractVector)
+    n = length(x)
+    res = Array{String, 1}(undef, n)
+    for i = 1:n
+        if x[i] < 1e-3
+            s = "***"
+        elseif x[i] < 1e-2
+            s = "**"
+        elseif x[i] < 5e-2
+            s = "*"
+        elseif x[i] < 1e-1
+            s = "."
+        else
+            s = ""
+        end
+        num = @sprintf "%.2e" x[i]
+        if s != ""
+            res[i] = "$num ($s)"
+        else
+            res[i] = "$num"
+        end
+    end
+    return res
+end
+
