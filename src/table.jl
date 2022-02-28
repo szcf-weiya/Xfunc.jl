@@ -10,6 +10,7 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
                     colnames_of_rownames = ["level0", "level1"], file = "/tmp/tmp.tex",
                     other_cols = nothing, other_col_names = nothing,
                     other_cols_σ = nothing,
+                    right_cols = nothing, right_col_names = nothing,
                     isbf = nothing,
                     sigdigits = 4) where T <: AbstractMatrix
     @assert length(rownames) == length(μ) == length(σ)
@@ -24,8 +25,13 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
         noc = size(other_cols[1], 2)
     end
     println("noc = $noc")
+    if isnothing(right_cols)
+        nor = 0
+    else
+        nor = length(right_cols) # use list
+    end
     open(file, "w") do io
-        write(io, raw"\begin{tabular}{" * repeat("c", ncol + 2 + noc) * raw"}", "\n")
+        write(io, raw"\begin{tabular}{" * repeat("c", ncol + 2 + noc + nor) * raw"}", "\n")
         writeline(io, raw"\toprule")
         # colnames at the first level
         # write(io, "&")
@@ -38,6 +44,11 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
         end
         for i = 1:ncol0
             write(io, "&" * raw"\multicolumn{", "$ncol1}{c}{", colnames[i], "}")
+        end
+        if !isnothing(right_cols)
+            for i = 1:nor
+                write(io, raw"& \multirow{2}{*}{", right_col_names[i], "}")
+            end
         end
         writeline(io, raw"\tabularnewline")
         # writeline(io, raw"\cmidrule{3-", "$(ncol+2)}")
@@ -85,6 +96,11 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
                         else
                             write(io, "& $(@sprintf "%.2e" μ[i][j, k]) ($(@sprintf "%.1e" σ[i][j, k]))")
                         end
+                    end
+                end
+                if !isnothing(right_cols)
+                    for ii = 1:nor
+                        write(io, "& $(right_cols[ii][i][j])")
                     end
                 end
                 writeline(io, raw"\tabularnewline")
