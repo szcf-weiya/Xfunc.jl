@@ -1,8 +1,20 @@
 using Printf
+
 """
     myrange(x)
 
 Return the range of `x` by columns, ignoring `NaN`.
+
+# Examples
+
+```jldoctest
+julia> myrange([1, 2, 3])
+(1, 3)
+
+julia> myrange([1, NaN, 3]) # NaN is treated as Float64
+(1.0, 3.0)
+```
+
 """
 function myrange(x::AbstractVector{T}) where T <: Real
     ind = .!isnan.(x)
@@ -11,7 +23,7 @@ end
 
 function myrange(x::AbstractMatrix{T}) where T <: Real
     n = size(x, 2)
-    res = zeros(2, n)
+    res = zeros(typeof(x[1]), 2, n)
     for i = 1:n
         res[:, i] .= myrange(x[:, i])
     end
@@ -19,7 +31,18 @@ function myrange(x::AbstractMatrix{T}) where T <: Real
 end
 
 """
-    Annotate significance with symbols. Refer to `?symnum` in R.
+    star_pval(x)
+    
+Annotate significance with symbols. Refer to `?symnum` in R.
+
+# Examples
+
+```jldoctest
+julia> star_pval([0.0001, 0.1])
+2-element Vector{String}:
+ "1.00e-04 (***)"
+ "1.00e-01"
+```
 """
 function star_pval(x::AbstractVector)
     n = length(x)

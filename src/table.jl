@@ -4,6 +4,11 @@ writeline(io, str...) = write(io, str..., "\n")
 # suppose each row has the same number of subrows
 # TODO: varied subrows and subcolumns
 # abstractmatrix allows transposes of matrix
+"""
+    print2tex()
+
+Print a structural result to a latex table.
+"""
 function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T}, 
                     rownames::AbstractVector{String}, colnames::AbstractVector{String},
                     subrownames::AbstractVector{String}, subcolnames::AbstractVector{String}; 
