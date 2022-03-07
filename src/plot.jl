@@ -1,14 +1,19 @@
 using Primes
 using Plots
 const tmp = tempdir()
-function save_plots(ps::Array)
+function save_plots(ps::Array; output = nothing)
     n = length(ps)
     for (i, p) in enumerate(ps)
         savefig(p, "$tmp/p$i.pdf")
     end
     fignames = "$tmp/p" .* string.(1:n) .* ".pdf"
     run(`pdftk $fignames cat output $tmp/all.pdf`)
+    if !isnothing(output)
+        mv("$tmp/all.pdf", output)
+    end
 end
+# Tip: convert tuple (a, b, c) to array [a, b, c] via `collect`
+save_plots(ps::Tuple; kw...) = save_plots(collect(ps); kw...)
 
 function save_grid_plots(ps::Array, out = "all")
     if Plots.backend() == Plots.PGFPlotsXBackend()
