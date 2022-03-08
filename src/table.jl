@@ -1,4 +1,5 @@
 using Printf
+using HTTP
 
 writeline(io, str...) = write(io, str..., "\n")
 # suppose each row has the same number of subrows
@@ -8,6 +9,28 @@ writeline(io, str...) = write(io, str..., "\n")
     print2tex()
 
 Print a structural result to a latex table.
+
+# Examples
+
+TODO: It seems that jldoctest does not generate result files `ex1.tex` in Documenter.jl.
+
+```jldoctest
+julia> μ = [[1 2 3 4; 5 6 7 8], [4 3 2 1; 8 7 6 5]]
+2-element Vector{Matrix{Int64}}:
+ [1 2 3 4; 5 6 7 8]
+ [4 3 2 1; 8 7 6 5]
+
+julia> σ = [ones(Int, 2, 4), ones(Int,2,4)]
+2-element Vector{Matrix{Int64}}:
+ [1 1 1 1; 1 1 1 1]
+ [1 1 1 1; 1 1 1 1]
+
+julia> print2tex(μ, σ, ["A", "B"], ["a", "b"], ["1","2"], ["x", "y"], file = "ex1.tex")
+noc = 0
+14
+
+julia> tex2png("ex1.tex")
+```
 """
 function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T}, 
                     rownames::AbstractVector{String}, colnames::AbstractVector{String},
@@ -115,4 +138,28 @@ function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T},
         writeline(io, raw"\bottomrule")
         writeline(io, raw"\end{tabular}")
     end
+end
+
+"""
+    tex2png()
+
+Render a latex table source file into an image via https://quicklatex.com/js/quicklatex.js
+"""
+function tex2png(file::String, url = "https://quicklatex.com/latex3.f")
+    preamble = raw"""
+    \usepackage{amsmath}
+    \usepackage{amsfonts}
+    \usepackage{amssymb}
+    \usepackage{multirow}
+    \usepackage{booktabs}
+    """
+    content = String(read(file))
+    content = replace(content, "&"=>"%26", "%"=>"%25")
+    preamble = replace(preamble, "&"=>"%26", "%"=>"%25")
+    post_data = "formula=" * content * "&mode=0&out=1&preamble=" * preamble
+    r = HTTP.request("POST", url, [], post_data)
+    ret = String(r.body)
+    imgurl = split(ret)[2]
+    output = replace(file, ".tex" => ".png")
+    HTTP.download(imgurl, output)
 end

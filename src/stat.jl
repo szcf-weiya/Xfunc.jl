@@ -3,7 +3,7 @@ using Printf
 """
     myrange(x)
 
-Return the range of `x` by columns, ignoring `NaN`.
+Return the range of `x` by columns, ignoring `NaN`. Note that `NaN` will results an Int array as Float64 array.
 
 # Examples
 
@@ -11,8 +11,13 @@ Return the range of `x` by columns, ignoring `NaN`.
 julia> myrange([1, 2, 3])
 (1, 3)
 
-julia> myrange([1, NaN, 3]) # NaN is treated as Float64
+julia> myrange([1, NaN, 3])
 (1.0, 3.0)
+
+julia> myrange([1 2; 3 4; 5 6])
+2×2 Matrix{Int64}:
+ 1  2
+ 5  6
 ```
 
 """

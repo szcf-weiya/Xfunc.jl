@@ -1,6 +1,12 @@
 using Primes
 using Plots
 const tmp = tempdir()
+
+"""
+    save_plots(ps; output)
+
+Save multi-images into a pdf file, if `output` is unspecified (default), the resulting file is `/tmp/all.pdf`.
+"""
 function save_plots(ps::Array; output = nothing)
     n = length(ps)
     for (i, p) in enumerate(ps)
@@ -15,6 +21,13 @@ end
 # Tip: convert tuple (a, b, c) to array [a, b, c] via `collect`
 save_plots(ps::Tuple; kw...) = save_plots(collect(ps); kw...)
 
+"""
+    save_grid_plots(ps)
+
+Combine multi-plots into a `nrow` x `ncol` grid, where the number of rows and columns are automatically determined. The output file is `/tmp/all.png`
+
+If the backend is PGFPlotsXBackend, it will call `save_plots` instead.
+"""
 function save_grid_plots(ps::Array, out = "all")
     if Plots.backend() == Plots.PGFPlotsXBackend()
         @warn "PGFPlotsXBackend is used, so cat figures into pdf"

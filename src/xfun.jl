@@ -11,5 +11,6 @@ export
     myrange,
     split_keystr,
     print2tex,
+    tex2png,
     star_pval
 end
