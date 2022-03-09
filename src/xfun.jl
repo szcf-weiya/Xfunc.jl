@@ -4,6 +4,7 @@ include("plot.jl")
 include("stat.jl")
 include("str.jl")
 include("table.jl")
+include("sys.jl")
 
 export 
     save_grid_plots,
@@ -12,5 +13,6 @@ export
     split_keystr,
     print2tex,
     tex2png,
-    star_pval
+    star_pval,
+    memuse
 end

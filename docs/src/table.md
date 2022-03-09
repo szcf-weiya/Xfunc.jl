@@ -35,8 +35,6 @@ tex2png("ex2.tex")
 
 ```@example 1
 right = [[rand(3), rand(3)]]
-filepath = joinpath(@__DIR__, "tables/table.tex")
-# filepath = "../test/tables/table.tex"
 print2tex(μ, σ, ["A", "B"], ["a", "b"], ["1","2","3"], ["x", "y"], file = "ex3.tex", other_cols = others, other_col_names = ["other"], other_cols_σ = others_σ, right_cols = right, right_col_names = ["right"])
 tex2png("ex3.tex")
 ```
