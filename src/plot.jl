@@ -22,9 +22,9 @@ end
 save_plots(ps::Tuple; kw...) = save_plots(collect(ps); kw...)
 
 """
-    save_grid_plots(ps)
+    save_grid_plots(ps[, nrow, ncol])
 
-Combine multi-plots into a `nrow` x `ncol` grid, where the number of rows and columns are automatically determined. The output file is `/tmp/all.png`
+Combine multi-plots into a `nrow` x `ncol` grid. If `nrow` and `ncol` are not specified, then a factorization would be used. The output file is `/tmp/all.png`
 
 If the backend is PGFPlotsXBackend, it will call `save_plots` instead.
 """
@@ -37,16 +37,8 @@ function save_grid_plots(ps::Array, out = "all")
     n = length(ps)
     res = factor(Vector, n)
     # determine nrow and ncol of the grid
-    l = length(res)
-    nrow = res[1]
-    ncol = 1
-    if l == 2
-        nrow = res[2]
-        ncol = res[1]
-    else
-        ncol = res[end]
-        nrow = Int(n / ncol)
-    end
+    ncol = res[end]
+    nrow = Int(n / ncol)
     save_grid_plots(ps, nrow, ncol, out)
 end
 

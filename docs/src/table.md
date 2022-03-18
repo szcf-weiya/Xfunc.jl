@@ -7,10 +7,49 @@ tex2png
 
 ## Examples
 
-### Multi-rows and Multi-columns
+```@setup
+using xfun
+```
+
+### One-level rows and One-level columns
+
+```@example
+A = rand(2, 3)
+print2tex(A, ["A", "B"], ["col1", "col2", "col3"], file = "ex0.tex")
+tex2png("ex0.tex")
+```
+
+![](ex0.png)
+
+### Tuple in a cell
+
+For example, it might be the confidence interval.
+
+```@example
+a = randn(2)
+b = [randn(2) for i = 1:2, j = 1:2]
+A = hcat(a, b)
+print2tex(A, ["A", "B"], ["col1", "col2", "col3"], file = "ex01.tex")
+```
+
+![](ex01.png)
+
+
+### Share rownames: combine two tables
+
+```@example
+a = randn(2)
+b = [randn(2) for i = 1:2, j = 1:2]
+A = hcat(a, b)
+A2 = hcat(a, b)
+print2tex(A, ["A", "B"], ["col1", "col2", "col3"], A2 = A2, colnames2 = ["COL1", "col2", "col3"], file = "ex02.tex")
+```
+
+![](ex02.png)
+
+### Two-level rows and Two-level columns
 
 ```@example 1
-using xfun
 μ = [rand(3, 4), rand(3, 4)]
 σ = [rand(3, 4), rand(3, 4)]
 print2tex(μ, σ, ["A", "B"], ["a", "b"], ["1","2","3"], ["x", "y"], file = "ex1.tex")

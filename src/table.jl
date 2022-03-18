@@ -32,6 +32,62 @@ noc = 0
 julia> tex2png("ex1.tex")
 ```
 """
+function print2tex(A::AbstractMatrix, rownames::AbstractVector{String}, colnames::AbstractArray{String};
+                    A2 = nothing, colnames2 = nothing,
+                    file = "/tmp/tmp.tex")
+    nrow = length(rownames)
+    ncol = length(colnames)
+    @assert size(A) == (nrow, ncol)
+    open(file, "w") do io
+        write(io, raw"\begin{tabular}{" * repeat('c', ncol + 1) * raw"}", "\n")
+        writeline(io, raw"\toprule")
+        # header
+        for i = 1:ncol
+            write(io, "&", colnames[i])
+        end
+        writeline(io, raw"\tabularnewline")
+        writeline(io, raw"\midrule")
+        for j = 1:nrow
+            write(io, rownames[j])
+            for i = 1:ncol
+                if length(A[j, i]) == 1
+                    write(io, "&", @sprintf "%.2e" A[j, i])
+                elseif length(A[j, i]) == 2
+                    write(io, "& (", (@sprintf "%.2e" A[j, i][1]), ", ", (@sprintf "%.2e" A[j, i][2]), ")")
+                else
+                    @warn "not implemented for tuple with length larger than 3"
+                end
+            end
+            writeline(io, raw"\tabularnewline")
+        end
+        if !isnothing(A2)
+            writeline(io, raw"\midrule")
+            if !isnothing(colnames2)
+                for i = 1:ncol
+                    write(io, "&", colnames2[i])
+                end
+                writeline(io, raw"\tabularnewline")
+                writeline(io, raw"\midrule")
+            end
+            for j = 1:nrow
+                write(io, rownames[j])
+                for i = 1:ncol
+                    if length(A2[j, i]) == 1
+                        write(io, "&", @sprintf "%.2e" A2[j, i])
+                    elseif length(A2[j, i]) == 2
+                        write(io, "& (", (@sprintf "%.2e" A2[j, i][1]), ", ", (@sprintf "%.2e" A2[j, i][2]), ")")
+                    else
+                        @warn "not implemented for tuple with length larger than 3"
+                    end
+                end
+                writeline(io, raw"\tabularnewline")
+            end    
+        end
+        writeline(io, raw"\bottomrule")
+        writeline(io, raw"\end{tabular}")
+    end
+end
+
 function print2tex(μ::AbstractVector{T}, σ::AbstractVector{T}, 
                     rownames::AbstractVector{String}, colnames::AbstractVector{String},
                     subrownames::AbstractVector{String}, subcolnames::AbstractVector{String}; 
