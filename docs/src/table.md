@@ -7,13 +7,10 @@ tex2png
 
 ## Examples
 
-```@setup
-using xfun
-```
-
 ### One-level rows and One-level columns
 
-```@example
+```@example 1
+using xfun # hide
 A = rand(2, 3)
 print2tex(A, ["A", "B"], ["col1", "col2", "col3"], file = "ex0.tex")
 tex2png("ex0.tex")
@@ -25,7 +22,7 @@ tex2png("ex0.tex")
 
 For example, it might be the confidence interval.
 
-```@example
+```@example 1
 a = randn(2)
 b = [randn(2) for i = 1:2, j = 1:2]
 A = hcat(a, b)
@@ -37,7 +34,7 @@ print2tex(A, ["A", "B"], ["col1", "col2", "col3"], file = "ex01.tex")
 
 ### Share rownames: combine two tables
 
-```@example
+```@example 1
 a = randn(2)
 b = [randn(2) for i = 1:2, j = 1:2]
 A = hcat(a, b)
