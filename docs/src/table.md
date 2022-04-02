@@ -27,10 +27,35 @@ a = randn(2)
 b = [randn(2) for i = 1:2, j = 1:2]
 A = hcat(a, b)
 print2tex(A, ["A", "B"], ["col1", "col2", "col3"], file = "ex01.tex")
+tex2png("ex01.tex")
 ```
 
 ![](ex01.png)
 
+### Two-level Columns
+
+```@example 1
+a = randn(2)
+b = [randn(2) for i = 1:2, j = 1:2]
+A = hcat(a, b)
+B = hcat(A, A)
+print2tex(B, ["r1", "r2"], ["col01", "col02"], subcolnames = ["c1", "c2", "c3"], file="col2.tex")
+tex2png("col2.tex")
+```
+
+![](col2.png)
+
+```@example 1
+a = randn(2)
+b = [randn(2) for i = 1:2, j = 1:2]
+A = hcat(a, b)
+B = hcat(A, A)
+C = [B, B]
+print2tex(C, ["r01", "r02"], ["col01", "col02"], subcolnames = ["c1", "c2", "c3"], subrownames = ["r1", "r2"], colnames_of_rownames = ["level0", "level1"], file="row2col2.tex")
+tex2png("row2col2.tex")
+```
+
+![](row2col2.png)
 
 ### Share rownames: combine two tables
 
@@ -40,6 +65,7 @@ b = [randn(2) for i = 1:2, j = 1:2]
 A = hcat(a, b)
 A2 = hcat(a, b)
 print2tex(A, ["A", "B"], ["col1", "col2", "col3"], A2 = A2, colnames2 = ["COL1", "col2", "col3"], file = "ex02.tex")
+tex2png("ex02.tex")
 ```
 
 ![](ex02.png)

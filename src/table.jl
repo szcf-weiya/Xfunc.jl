@@ -32,18 +32,134 @@ noc = 0
 julia> tex2png("ex1.tex")
 ```
 """
+function print2tex(A::AbstractVector{T}, rownames::AbstractVector{String}, colnames::AbstractArray{String};
+                    subcolnames = nothing,
+                    subrownames = nothing,
+                    A2 = nothing, colnames2 = nothing,
+                    colnames_of_rownames = ["level0", "level1"], # assume only two levels
+                    isbf = nothing,
+                    file = "/tmp/tmp.tex") where T <: AbstractMatrix
+    nrow = length(rownames)
+    if isnothing(subcolnames)
+        ncol = length(colnames)
+        ncol0 = length(colnames)
+        ncol1 = 1
+    else
+        ncol0 = length(colnames)
+        ncol1 = length(subcolnames)
+        ncol = Int(ncol0 * ncol1)
+    end
+    open(file, "w") do io
+        write(io, raw"\begin{tabular}{" * repeat('c', ncol + 2) * raw"}", "\n")
+        writeline(io, raw"\toprule")
+        write(io, raw"\multirow{2}{*}{", colnames_of_rownames[1], "} & ", 
+        raw"\multirow{2}{*}{", colnames_of_rownames[2], "}")
+        # header
+        if isnothing(subcolnames)
+            for i = 1:ncol
+                write(io, "&", colnames[i])
+            end
+        else
+            # colnames at the first level
+            for i = 1:ncol0
+                write(io, "&" * raw"\multicolumn{", "$ncol1}{c}{", colnames[i], "}")
+            end
+            writeline(io, raw"\tabularnewline")
+            left = 2 + 1 # now rowlevbel equals to 2
+            for i = 1:ncol0
+                right = left + ncol1 - 1
+                writeline(io, raw"\cmidrule(lr){", "$left-", "$right}")
+                left = right + 1
+            end
+            # colnames at the second level
+            write(io, "&") # one more for the two-level rownames
+            for i = 1:ncol0
+                for j = 1:ncol1
+                    write(io, "&", subcolnames[j])
+                end
+            end
+        end
+        writeline(io, raw"\tabularnewline")
+        writeline(io, raw"\midrule")
+        for j = 1:nrow
+            writeline(io, raw"\midrule")
+            L = size(A[j], 1)
+            for l = 1:L
+                if l == 1
+                    write(io, raw"\multirow{", "$L}{*}{", rownames[j], "}")
+                end
+                write(io, "&", subrownames[l])
+                for i = 1:ncol
+                    if length(A[j][l, i]) == 1
+                        if !isnothing(isbf) && isbf[j][l, i]
+                            write(io, "&", "\\textbf{", (@sprintf "%.2e" A[j][l, i]), "}")
+                        else
+                            write(io, "&", @sprintf "%.2e" A[j][l, i])
+                        end
+                    elseif length(A[j][l, i]) == 2
+                        if !isnothing(isbf) && isbf[j][l, i]
+                            write(io, "& (\\textbf{", (@sprintf "%.2e" A[j][l, i][1]), ", ", (@sprintf "%.2e" A[j][l, i][2]), ")}")
+                        else
+                            write(io, "& (", (@sprintf "%.2e" A[j][l, i][1]), ", ", (@sprintf "%.2e" A[j][l, i][2]), ")")
+                        end
+                    else
+                        @warn "not implemented for tuple with length larger than 3"
+                    end
+                end
+                writeline(io, raw"\tabularnewline")
+            end
+        end
+        writeline(io, raw"\bottomrule")
+        writeline(io, raw"\end{tabular}")
+    end
+end
+
 function print2tex(A::AbstractMatrix, rownames::AbstractVector{String}, colnames::AbstractArray{String};
+                    subcolnames = nothing,
+                    subrownames = nothing,
+                    isbf = nothing,
+                    colname_of_row = "row",
                     A2 = nothing, colnames2 = nothing,
                     file = "/tmp/tmp.tex")
     nrow = length(rownames)
-    ncol = length(colnames)
+    if isnothing(subcolnames)
+        ncol = length(colnames)
+        ncol0 = length(colnames)
+        ncol1 = 1
+    else
+        ncol0 = length(colnames)
+        ncol1 = length(subcolnames)
+        ncol = Int(ncol0 * ncol1)
+    end
     @assert size(A) == (nrow, ncol)
     open(file, "w") do io
         write(io, raw"\begin{tabular}{" * repeat('c', ncol + 1) * raw"}", "\n")
         writeline(io, raw"\toprule")
         # header
-        for i = 1:ncol
-            write(io, "&", colnames[i])
+        if isnothing(subcolnames)
+            write(io, colname_of_row)
+            for i = 1:ncol
+                write(io, "&", colnames[i])
+            end
+        else
+            write(io, raw"\multirow{2}{*}{", colname_of_row, "}")
+            # colnames at the first level
+            for i = 1:ncol0
+                write(io, "&" * raw"\multicolumn{", "$ncol1}{c}{", colnames[i], "}")
+            end
+            writeline(io, raw"\tabularnewline")
+            left = 2
+            for i = 1:ncol0
+                right = left + ncol1 - 1
+                writeline(io, raw"\cmidrule(lr){", "$left-", "$right}")
+                left = right + 1
+            end
+            # colnames at the second level
+            for i = 1:ncol0
+                for j = 1:ncol1
+                    write(io, "&", subcolnames[j])
+                end
+            end
         end
         writeline(io, raw"\tabularnewline")
         writeline(io, raw"\midrule")
@@ -51,9 +167,17 @@ function print2tex(A::AbstractMatrix, rownames::AbstractVector{String}, colnames
             write(io, rownames[j])
             for i = 1:ncol
                 if length(A[j, i]) == 1
-                    write(io, "&", @sprintf "%.2e" A[j, i])
+                    if !isnothing(isbf) && isbf[j, i]
+                        write(io, "& \\textbf{", (@sprintf "%.2e" A[j, i]), "}")
+                    else
+                        write(io, "&", @sprintf "%.2e" A[j, i])
+                    end
                 elseif length(A[j, i]) == 2
-                    write(io, "& (", (@sprintf "%.2e" A[j, i][1]), ", ", (@sprintf "%.2e" A[j, i][2]), ")")
+                    if !isnothing(isbf) && isbf[j, i]
+                        write(io, "& \\textbf{(", (@sprintf "%.2e" A[j, i][1]), ", ", (@sprintf "%.2e" A[j, i][2]), ")}")
+                    else
+                        write(io, "& (", (@sprintf "%.2e" A[j, i][1]), ", ", (@sprintf "%.2e" A[j, i][2]), ")")
+                    end
                 else
                     @warn "not implemented for tuple with length larger than 3"
                 end
