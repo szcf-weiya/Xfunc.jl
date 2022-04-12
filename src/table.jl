@@ -116,7 +116,6 @@ end
 
 function print2tex(A::AbstractMatrix, rownames::AbstractVector{String}, colnames::AbstractArray{String};
                     subcolnames = nothing,
-                    subrownames = nothing,
                     isbf = nothing,
                     colname_of_row = "row",
                     A2 = nothing, colnames2 = nothing,

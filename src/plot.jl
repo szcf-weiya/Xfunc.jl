@@ -1,13 +1,12 @@
 using Primes
 using Plots
-const tmp = tempdir()
 
 """
     save_plots(ps; output)
 
 Save multi-images into a pdf file, if `output` is unspecified (default), the resulting file is `/tmp/all.pdf`.
 """
-function save_plots(ps::Array; output = nothing)
+function save_plots(ps::Array; output = nothing, tmp = tempdir())
     n = length(ps)
     for (i, p) in enumerate(ps)
         savefig(p, "$tmp/p$i.pdf")
@@ -28,7 +27,7 @@ Combine multi-plots into a `nrow` x `ncol` grid. If `nrow` and `ncol` are not sp
 
 If the backend is PGFPlotsXBackend, it will call `save_plots` instead.
 """
-function save_grid_plots(ps::Array, out = "all")
+function save_grid_plots(ps::Array; out = "all", tmp = tempdir())
     if Plots.backend() == Plots.PGFPlotsXBackend()
         @warn "PGFPlotsXBackend is used, so cat figures into pdf"
         save_plots(ps)
@@ -39,10 +38,10 @@ function save_grid_plots(ps::Array, out = "all")
     # determine nrow and ncol of the grid
     ncol = res[end]
     nrow = Int(n / ncol)
-    save_grid_plots(ps, nrow, ncol, out)
+    save_grid_plots(ps, nrow, ncol; out = out, tmp = tmp)
 end
 
-function save_grid_plots(ps, nrow, ncol, out = "all")
+function save_grid_plots(ps, nrow, ncol; out = "all", tmp = tempdir())
     n = length(ps)
     if nrow * ncol != n
         error("different number of plots")
