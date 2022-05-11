@@ -38,6 +38,7 @@ function print2tex(A::AbstractVector{T}, rownames::AbstractVector{String}, colna
                     A2 = nothing, colnames2 = nothing,
                     colnames_of_rownames = ["level0", "level1"], # assume only two levels
                     isbf = nothing,
+                    format = "2e", # raw
                     file = "/tmp/tmp.tex") where T <: AbstractMatrix
     nrow = length(rownames)
     if isnothing(subcolnames)
@@ -94,7 +95,11 @@ function print2tex(A::AbstractVector{T}, rownames::AbstractVector{String}, colna
                         if !isnothing(isbf) && isbf[j][l, i]
                             write(io, "&", "\\textbf{", (@sprintf "%.2e" A[j][l, i]), "}")
                         else
-                            write(io, "&", @sprintf "%.2e" A[j][l, i])
+                            if format == "raw"
+                                write(io, "& $(A[j][l, i])")
+                            else
+                                write(io, "&", @sprintf "%.2e" A[j][l, i])
+                            end
                         end
                     elseif length(A[j][l, i]) == 2
                         if !isnothing(isbf) && isbf[j][l, i]
