@@ -7,7 +7,7 @@ memuse
 ```
 
 ```@example
-using xfun # hide
+using Xfunc # hide
 for i = 1:3
     a = zeros(1024, 1024, 5, 10);
     memuse()

@@ -10,7 +10,7 @@ tex2png
 ### One-level rows and One-level columns
 
 ```@example 1
-using xfun # hide
+using Xfunc # hide
 A = rand(2, 3)
 print2tex(A, ["A", "B"], ["col1", "col2", "col3"], file = "ex0.tex")
 tex2png("ex0.tex")
