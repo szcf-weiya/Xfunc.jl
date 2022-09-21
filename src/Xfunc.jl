@@ -1,4 +1,4 @@
-module xfun
+module Xfunc
 
 include("plot.jl")
 include("stat.jl")

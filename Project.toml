@@ -1,5 +1,5 @@
-name = "xfun"
-uuid = "77570dc4-1096-48f5-86af-d733cda51951"
+name = "Xfunc"
+uuid = "95eae90c-d1ad-48c2-a6f5-b7224b192ab5"
 authors = ["szcf-weiya <szcfweiya@gmail.com>"]
 version = "0.1.0"
 
@@ -14,3 +14,6 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Test"]
+
+[compat]
+julia = "1"

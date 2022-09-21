@@ -1,5 +1,5 @@
 using Test
-using xfun
+using Xfunc
 using Plots
 
 @testset "myrange" begin

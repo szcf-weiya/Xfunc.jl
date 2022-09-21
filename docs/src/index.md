@@ -1,10 +1,10 @@
-# xfun.jl Documentation
+# Xfunc.jl Documentation
 
 ```@meta
-CurrentModule = xfun
+CurrentModule = Xfunc
 ```
 
-xfun.jl is a Julia package that collects util functions that I often used.
+Xfunc.jl is a Julia package that collects util functions that I often used.
 
 ```@contents
 Pages = ["stat.md", "str.md", "sys.md", "plot.md", "table.md"]

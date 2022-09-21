@@ -8,7 +8,7 @@ save_grid_plots
 ## Examples
 
 ```@example
-using xfun
+using Xfunc
 using Plots
 figs = Plots.Plot[]
 x = 0:0.1:1
@@ -22,7 +22,7 @@ save_grid_plots(figs)
 
 ## Gallery
 
-This part contains figures that I used, and not necessarily depend on the `xfun.jl` package.
+This part contains figures that I used, and not necessarily depend on the `Xfunc.jl` package.
 
 ### Joint Density with Marginal Densities
 
