@@ -17,4 +17,6 @@ test = ["Test"]
 
 [compat]
 Primes = "0.5"
+HTTP = "0.9"
+Plots = "1"
 julia = "1"
